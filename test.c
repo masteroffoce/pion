@@ -1,6 +1,13 @@
 #include <gtk/gtk.h>
 #include <gtk-layer-shell.h>
 
+gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+    gtk_main_quit();
+    const gchar *keyname = gdk_keyval_name(event->keyval);
+    g_print("%s\n", keyname, event->keyval);
+    return TRUE;
+}
+
 int main(int argc, char **argv) {
     gtk_init(&argc, &argv);
 
@@ -11,13 +18,17 @@ int main(int argc, char **argv) {
 
     gtk_layer_init_for_window(GTK_WINDOW(window));
     gtk_layer_set_layer(GTK_WINDOW(window), GTK_LAYER_SHELL_LAYER_TOP);
-    gtk_layer_set_keyboard_interactivity(GTK_WINDOW(window), FALSE);
+    gtk_layer_set_keyboard_interactivity(GTK_WINDOW(window), TRUE);
     gtk_layer_set_exclusive_zone(GTK_WINDOW(window), 0);
     gtk_layer_set_anchor(GTK_WINDOW(window),
                          GTK_LAYER_SHELL_EDGE_TOP |
                          GTK_LAYER_SHELL_EDGE_LEFT,
                          TRUE);
     gtk_layer_set_margin(GTK_WINDOW(window), GTK_LAYER_SHELL_EDGE_TOP, 200);
+
+    gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
+
+    g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), NULL);
 
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_container_add(GTK_CONTAINER(window), box);
@@ -33,7 +44,3 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-gboolean key_pressed(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
-    gtk_main_quit();
-    return TRUE;
-}
