@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
                          GTK_LAYER_SHELL_EDGE_RIGHT,
                          TRUE);
 
-    GtkWidget *button = gtk_button_new_with_label("Close");
+    GtkWidget *button = gtk_button_new_with_label("Hello, world!");
     g_signal_connect(button, "clicked", G_CALLBACK(gtk_main_quit), NULL);
     gtk_container_add(GTK_CONTAINER(window), button);
 
