@@ -1,10 +1,12 @@
 #include <gtk/gtk.h>
 #include <gtk-layer-shell.h>
+#include "do_bash.h"
 
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     gtk_main_quit();
     const gchar *keyname = gdk_keyval_name(event->keyval);
     g_print("%s\n", keyname, event->keyval);
+    run_from_input(1);
     return TRUE;
 }
 
