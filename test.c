@@ -2,11 +2,21 @@
 #include <gtk-layer-shell.h>
 #include "do_bash.h"
 
-gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
+gboolean call_bash(gpointer data) {
+    gchar *key = (gchar *)data;
+    
+    run_from_input(key);
+	
+    //g_free(key);
     gtk_main_quit();
+    return G_SOURCE_REMOVE;
+}
+
+gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     const gchar *keyname = gdk_keyval_name(event->keyval);
     g_print("%s\n", keyname, event->keyval);
-    run_from_input(1);
+    //run_from_input(keyname);
+    g_idle_add(call_bash, (gpointer)keyname);
     return TRUE;
 }
 
