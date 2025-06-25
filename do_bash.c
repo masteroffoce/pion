@@ -5,6 +5,7 @@
 #include <cjson/cJSON.h>
 
 void print_json(char *keys_arr) {
+	
 
 	int current_depth = (int) strlen(keys_arr);
 
@@ -31,7 +32,9 @@ void print_json(char *keys_arr) {
 	}
 
 	//Otherwise, call the program again but with the new key appended
-	
+	if (cJSON_IsObject(current_json) && current_json->child != NULL) {
+		execlp("./run", "run", keys_arr, NULL);
+	}
 
 	//Print the JSON object
 	char *json_string = cJSON_Print(current_json); 

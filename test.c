@@ -58,10 +58,12 @@ int main(int argc, char **argv) {
 
 	printf("Key: %s", pressed_key);
 	 
-
-	//print_json("k");
 	if(argv[1]) {
-		print_json(argv[1]);
+		char *arg = argv[1];
+		strcat(arg, pressed_key);
+		print_json(arg);
+	} else {
+		print_json(pressed_key);
 	}
 
 
