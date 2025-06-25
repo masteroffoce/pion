@@ -1,0 +1,14 @@
+{
+	"f": {
+		"i": {
+			"shell": "firefox &"
+		},
+		"r": {
+			"shell": "flatpak --user run com.revolutionarygamesstudio.ThriveLauncher &"
+		}
+	},
+	"k": {
+		"app": "kitty",
+		"args": ["kitty", "--detach", null]
+	}
+}

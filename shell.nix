@@ -5,6 +5,7 @@ pkgs.mkShell {
     pkgs.gtk3
     pkgs.gtk-layer-shell
     pkgs.pkg-config
+	pkgs.cjson
   ];
 
   shellHook = ''
