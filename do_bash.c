@@ -35,13 +35,20 @@ void print_json(char *keys_arr) {
 	cJSON *json = cJSON_Parse(buffer);
 
 	
-	//Do a recursive search
+	//Do a nested search
 	cJSON *current_json = json;
 
 	for (int i = 0; i < current_depth; ++i) {
 		current_json = cJSON_GetObjectItem(current_json, (char[]) {keys_arr[i], '\0'} );
 	}
 
+	//If there's a "shell" or "app" value, take action
+	cJSON *shell = cJSON_GetObjectItem(current_json, "shell");
+	if (cJSON_IsString(shell)) {
+		system(shell->valuestring);
+	}
+
+	//Print the JSON object
 	char *json_string = cJSON_Print(current_json); 
 	printf("%s",json_string);
 	free(json_string);

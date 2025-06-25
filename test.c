@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 
 	 
 
-	print_json("fi");
+	print_json("k");
 
 
     return 0;
