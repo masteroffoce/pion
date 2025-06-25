@@ -4,27 +4,8 @@
 #include <unistd.h>
 #include <cjson/cJSON.h>
 
-void run_from_input(char *key) {
-	pid_t pid = fork();
-	if (pid == 0){
-		if(strcmp(key, "F9") == 0) {
-			system("firefox &");
-		}
-		if(strcmp(key, "F10") == 0) {
-			execlp("kitty", "kitty", "--detach", NULL);
-		}
-		if(strcmp(key, "F11") == 0) {
-			system("flatpak --user run com.revolutionarygamesstudio.ThriveLauncher &");
-		}
-		exit(0);
-	}
-	if (pid != 0) {
-		printf("%s\n", key);
-		return;
-	}
-}
-
 void print_json(char *keys_arr) {
+
 	int current_depth = (int) strlen(keys_arr);
 
 	FILE *layout_file = fopen("layout.json", "r");
@@ -46,7 +27,11 @@ void print_json(char *keys_arr) {
 	cJSON *shell = cJSON_GetObjectItem(current_json, "shell");
 	if (cJSON_IsString(shell)) {
 		system(shell->valuestring);
+		exit(1);
 	}
+
+	//Otherwise, call the program again but with the new key appended
+	
 
 	//Print the JSON object
 	char *json_string = cJSON_Print(current_json); 

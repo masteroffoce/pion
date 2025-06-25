@@ -2,10 +2,12 @@
 #include <gtk-layer-shell.h>
 #include "do_bash.h"
 
+static gchar *pressed_key = NULL;
+
 gboolean call_bash(gpointer data) {
     gchar *key = (gchar *)data;
     
-    run_from_input(key);
+    //run_from_input(key);
 	
     //g_free(key);
     gtk_main_quit();
@@ -15,6 +17,7 @@ gboolean call_bash(gpointer data) {
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
     const gchar *keyname = gdk_keyval_name(event->keyval);
     g_print("%s\n", keyname, event->keyval);
+	pressed_key = g_strdup(keyname);
     //run_from_input(keyname);
     g_idle_add(call_bash, (gpointer)keyname);
     return TRUE;
@@ -53,9 +56,13 @@ int main(int argc, char **argv) {
     gtk_widget_show_all(window);
     gtk_main();
 
+	printf("Key: %s", pressed_key);
 	 
 
-	print_json("k");
+	//print_json("k");
+	if(argv[1]) {
+		print_json(argv[1]);
+	}
 
 
     return 0;
