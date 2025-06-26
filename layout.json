@@ -8,7 +8,6 @@
 		}
 	},
 	"k": {
-		"app": "kitty",
-		"args": ["kitty", "--detach", null]
+		"shell": "kitty --detach &"
 	}
 }
