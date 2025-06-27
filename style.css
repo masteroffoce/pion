@@ -1,0 +1,13 @@
+
+label {
+	color: white;
+	font-size: 18px;
+	background-color: #333;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+
+window {
+	border: 10px solid #222;
+}

@@ -5,6 +5,11 @@
 
 char *pressed_key = NULL;
 
+typedef struct {
+	GtkLabel *title_label;
+	GPtrArray *keys_arr;
+} AppData;
+
 gboolean eval_key(const char *keyname, GPtrArray *keys_arr) {
 	if (print_json(keys_arr) == 0) {
 		return FALSE;
@@ -15,11 +20,14 @@ gboolean eval_key(const char *keyname, GPtrArray *keys_arr) {
 
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
 	(void) widget;
-	GPtrArray *keys_arr = user_data;
+	AppData *data = (AppData *)user_data;
+
+	GPtrArray *keys_arr = data->keys_arr;
 
     const gchar *keyname = gdk_keyval_name(event->keyval);
 	g_free(pressed_key);
 	pressed_key = g_strdup(keyname);
+	gtk_label_set_text(data->title_label, keyname);
 
 	g_ptr_array_add(keys_arr, g_strdup(keyname));
 	//g_print("Key: %s\n", keyname);
@@ -39,7 +47,7 @@ int main(int argc, char **argv) {
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "GTK Layer Shell Popup");
     gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
-    gtk_widget_set_size_request(window, 300, 150);
+    gtk_widget_set_size_request(window, 1500, 700);
 
     gtk_layer_init_for_window(GTK_WINDOW(window));
     gtk_layer_set_layer(GTK_WINDOW(window), GTK_LAYER_SHELL_LAYER_TOP);
@@ -53,15 +61,51 @@ int main(int argc, char **argv) {
 
     gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
 
-    g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), keys_arr);
 
-    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_container_add(GTK_CONTAINER(window), box);
+	//Needs to be created now for the struct
+    GtkWidget *title_label = gtk_label_new("Hi");
 
-    GtkWidget *label = gtk_label_new("Firefox\nKitty");
-    gtk_box_pack_start(GTK_BOX(box), label, TRUE, TRUE, 0);
+	AppData data;
+	data.title_label = GTK_LABEL(title_label);
+	data.keys_arr = keys_arr;
+
+
+
+    g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &data);
+
+	//Start of something
+	GtkWidget *grid = gtk_grid_new();
+
+	GtkWidget *label1 = gtk_label_new("Hello");
+	GtkWidget *label2 = gtk_label_new("Hello");
+	GtkWidget *label3 = gtk_label_new("Hi");
+	GtkWidget *label4 = gtk_label_new("Hello");
+	gtk_grid_attach(GTK_GRID(grid), label1, 0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), label2, 0, 1, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), label3, 1, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid), label4, 1, 1, 1, 1);
+	
+	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    gtk_box_pack_start(GTK_BOX(box), title_label, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(box), grid, TRUE, TRUE, 0);
+
+	gtk_container_add(GTK_CONTAINER(window), box);
+
+
+	//End of something
+	
+	//CSS
+	GtkCssProvider *css_provider = gtk_css_provider_new();
+	GdkScreen *screen = gdk_screen_get_default();
+	gtk_css_provider_load_from_file(css_provider, g_file_new_for_path("style.css"), NULL);
+
+	GtkStyleContext *window_context = gtk_widget_get_style_context(window);
+	gtk_style_context_add_provider(window_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+	GtkStyleContext *title_context = gtk_widget_get_style_context(title_label);
+	gtk_style_context_add_provider(title_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
 
     gtk_widget_show_all(window);
     gtk_main();
