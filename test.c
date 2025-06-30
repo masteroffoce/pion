@@ -3,6 +3,8 @@
 #include "do_bash.h"
 #include <string.h>
 
+#define BACK_KEY "BackSpace"
+
 char *pressed_key = NULL;
 
 typedef struct {
@@ -47,8 +49,14 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
     const gchar *keyname = gdk_keyval_name(event->keyval);
 	g_free(pressed_key);
 	pressed_key = g_strdup(keyname);
+	
+	//If pressed key is backspace, remove the last pressed key
+	if (strcmp(pressed_key, BACK_KEY) == 0) {
+		g_ptr_array_remove_index(keys_arr, keys_arr->len - 1);
+	} else { //Else, add pressed key to list
+		g_ptr_array_add(keys_arr, g_strdup(keyname));
+	}
 
-	g_ptr_array_add(keys_arr, g_strdup(keyname));
 	GPtrArray* fixxed = presuffix_keys_arr(keys_arr);
 	char * keys_so_far_string = string_from_keys_arr(fixxed);
 	gtk_label_set_text(data->title_label, keys_so_far_string);
