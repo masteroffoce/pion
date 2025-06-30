@@ -10,7 +10,7 @@ typedef struct {
 	GPtrArray *keys_arr;
 } AppData;
 
-gboolean eval_key(const char *keyname, GPtrArray *keys_arr) {
+gboolean eval_key(GPtrArray *keys_arr) {
 	if (print_json(keys_arr) == 0) {
 		return FALSE;
 	} else {
@@ -47,12 +47,15 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
     const gchar *keyname = gdk_keyval_name(event->keyval);
 	g_free(pressed_key);
 	pressed_key = g_strdup(keyname);
+
 	g_ptr_array_add(keys_arr, g_strdup(keyname));
-	gtk_label_set_text(data->title_label, string_from_keys_arr(keys_arr));
+	GPtrArray* fixxed = presuffix_keys_arr(keys_arr);
+	char * keys_so_far_string = string_from_keys_arr(fixxed);
+	gtk_label_set_text(data->title_label, keys_so_far_string);
 
 	//g_print("Key: %s\n", keyname);
 
-	if (eval_key(keyname, keys_arr)) {
+	if (eval_key(keys_arr)) {
 		gtk_main_quit();
 	}
 
@@ -65,7 +68,7 @@ int main(int argc, char **argv) {
 	GPtrArray *keys_arr = g_ptr_array_new_with_free_func(g_free);
 
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "GTK Layer Shell Popup");
+    gtk_window_set_title(GTK_WINDOW(window), "I hope no one sees this.");
     gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
     gtk_widget_set_size_request(window, 1500, 700);
 
@@ -83,7 +86,7 @@ int main(int argc, char **argv) {
 
 
 	//Needs to be created now for the struct
-    GtkWidget *title_label = gtk_label_new("Hi");
+    GtkWidget *title_label = gtk_label_new("");
 
 	AppData data;
 	data.title_label = GTK_LABEL(title_label);

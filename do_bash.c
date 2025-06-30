@@ -38,7 +38,7 @@ int print_json(GPtrArray *keys_arr) {
 		exit(1);
 	}
 
-	//Otherwise, call the program again but with the new key appended
+	//Otherwise, exit the program
 	if (cJSON_IsObject(current_json) && current_json->child != NULL) {
 		//execlp("./run", "run", keys_arr, NULL);
 		return 0;
@@ -46,8 +46,27 @@ int print_json(GPtrArray *keys_arr) {
 
 	//Print the JSON object
 	char *json_string = cJSON_Print(current_json); 
-	//printf("%s",json_string);
 	free(json_string);
 
 	return 1;
+}
+
+GPtrArray* presuffix_keys_arr(GPtrArray *keys_arr) {
+	GPtrArray *fixxed;
+	fixxed = g_ptr_array_new_with_free_func((GDestroyNotify)g_free);
+	for (uint i = 0; i < keys_arr->len; i++) {
+		char* keys_arr_elem = g_ptr_array_index(keys_arr, i); //Define current key
+
+		//Add pre- and suffixes if the key isn't a letter or number
+		char fixxed_string[12] = "";
+		if (strlen(keys_arr_elem) > 1) {
+			strcat(fixxed_string, "[");
+		}
+		strcat(fixxed_string, keys_arr_elem);
+		if (strlen(keys_arr_elem) > 1) {
+			strcat(fixxed_string, "]");
+		}
+		g_ptr_array_add(fixxed, g_strdup(fixxed_string));
+	}
+	return fixxed;
 }

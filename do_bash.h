@@ -2,5 +2,6 @@
 #define UI_H
 
 int print_json(GPtrArray *keys_arr);
+GPtrArray* presuffix_keys_arr(GPtrArray *keys_arr);
 
 #endif
