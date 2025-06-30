@@ -18,6 +18,26 @@ gboolean eval_key(const char *keyname, GPtrArray *keys_arr) {
 	}
 }
 
+//Convert GPtrArray to string
+char * string_from_keys_arr(GPtrArray *keys_arr) { 
+	size_t len = 1; //Make space for the null terminator
+	for (uint i = 0; i < keys_arr->len; i++) {
+		char *key = (char *)g_ptr_array_index(keys_arr, i);
+		len += strlen(key);
+	}
+
+	char *buffer = malloc(len);
+
+	buffer[0] = '\0';
+	for (uint i = 0; i < keys_arr->len; i++) {
+		char *key = (char *)g_ptr_array_index(keys_arr, i);
+		strcat(buffer, key);
+	}
+
+	printf("%s\n", buffer);
+	return buffer;
+}
+
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
 	(void) widget;
 	AppData *data = (AppData *)user_data;
@@ -27,9 +47,9 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
     const gchar *keyname = gdk_keyval_name(event->keyval);
 	g_free(pressed_key);
 	pressed_key = g_strdup(keyname);
-	gtk_label_set_text(data->title_label, keyname);
-
 	g_ptr_array_add(keys_arr, g_strdup(keyname));
+	gtk_label_set_text(data->title_label, string_from_keys_arr(keys_arr));
+
 	//g_print("Key: %s\n", keyname);
 
 	if (eval_key(keyname, keys_arr)) {
