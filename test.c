@@ -4,6 +4,7 @@
 #include <string.h>
 
 #define BACK_KEY "BackSpace"
+#define NUM_OF_KEYS 16
 
 char *pressed_key = NULL;
 
@@ -52,7 +53,12 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	
 	//If pressed key is backspace, remove the last pressed key
 	if (strcmp(pressed_key, BACK_KEY) == 0) {
-		g_ptr_array_remove_index(keys_arr, keys_arr->len - 1);
+		//Remove last pressed key unless no elements in array
+		if (keys_arr->len > 0) {
+			g_ptr_array_remove_index(keys_arr, keys_arr->len - 1);
+		} else {
+			gtk_main_quit();
+		}
 	} else { //Else, add pressed key to list
 		g_ptr_array_add(keys_arr, g_strdup(keyname));
 	}
@@ -104,18 +110,44 @@ int main(int argc, char **argv) {
 
     g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &data);
 
+	//CSS
+	GtkCssProvider *css_provider = gtk_css_provider_new();
+	GdkScreen *screen = gdk_screen_get_default();
+	gtk_css_provider_load_from_file(css_provider, g_file_new_for_path("style.css"), NULL);
+
+	GtkStyleContext *window_context = gtk_widget_get_style_context(window);
+	GtkStyleContext *title_context = gtk_widget_get_style_context(title_label);
+
 	//Start of something
 	GtkWidget *grid = gtk_grid_new();
 
-	GtkWidget *label1 = gtk_label_new("Hello");
-	GtkWidget *label2 = gtk_label_new("Hello");
-	GtkWidget *label3 = gtk_label_new("Hi");
-	GtkWidget *label4 = gtk_label_new("Hello");
-	gtk_grid_attach(GTK_GRID(grid), label1, 0, 0, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), label2, 0, 1, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), label3, 1, 0, 1, 1);
-	gtk_grid_attach(GTK_GRID(grid), label4, 1, 1, 1, 1);
-	
+	//Make labels for keys
+	GtkWidget *keys_labels[NUM_OF_KEYS];
+	GtkWidget *box_labels[NUM_OF_KEYS];
+	for (int i = 0; i < NUM_OF_KEYS; i++) {
+		//Make box
+		box_labels[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+
+		//Make label
+		keys_labels[i] = gtk_label_new("mjau");
+
+		//Put label in box
+		gtk_box_pack_start(GTK_BOX(box_labels[i]), keys_labels[i], TRUE, TRUE, 0);
+
+		//Attach box to grid
+		gtk_grid_attach(GTK_GRID(grid), box_labels[i], i/4, i%4, 1, 1);
+
+		//Apply CSS styles
+		/*
+		gtk_style_context_add_class(box_labels, "key");
+		GtkStyleContext *keys_labels_context = gtk_widget_get_style_context(keys_labels[i]);
+		gtk_style_context_add_provider(keys_labels_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+		*/
+		GtkStyleContext *context = gtk_widget_get_style_context(box_labels[i]);
+		gtk_style_context_add_class(context, "key");
+
+	}
+
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     gtk_box_pack_start(GTK_BOX(box), title_label, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(box), grid, TRUE, TRUE, 0);
@@ -125,14 +157,8 @@ int main(int argc, char **argv) {
 
 	//End of something
 	
-	//CSS
-	GtkCssProvider *css_provider = gtk_css_provider_new();
-	GdkScreen *screen = gdk_screen_get_default();
-	gtk_css_provider_load_from_file(css_provider, g_file_new_for_path("style.css"), NULL);
-
-	GtkStyleContext *window_context = gtk_widget_get_style_context(window);
+	//CSS2
 	gtk_style_context_add_provider(window_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
-	GtkStyleContext *title_context = gtk_widget_get_style_context(title_label);
 	gtk_style_context_add_provider(title_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);

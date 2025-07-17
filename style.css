@@ -1,6 +1,6 @@
 label {
 	color: white;
-	font-size: 18px;
+	font-size: 20px;
 	background-color: #333;
 	padding: 10px;
 	border-radius: 5px;
@@ -9,4 +9,12 @@ label {
 
 window {
 	border: 10px solid #222;
+}
+
+.key * {
+	color: white;
+	font-size: 30px;
+	background-color: #333;
+	padding: 20px;
+	border-radius: 5px;
 }
