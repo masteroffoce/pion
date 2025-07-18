@@ -1,20 +1,33 @@
-label {
-	color: white;
+.label {
+	color: #f00;
 	font-size: 20px;
 	background-color: #333;
 	padding: 10px;
 	border-radius: 5px;
 }
 
+.title {
+	font-size: 100px;
+}
 
-window {
+
+.window {
 	border: 10px solid #222;
 }
 
-.key * {
+.key {
 	color: white;
-	font-size: 30px;
 	background-color: #333;
 	padding: 20px;
 	border-radius: 5px;
+}
+
+.letter {
+	color: #333;
+	font-size: 20px;
+}
+
+.word {
+	color: #555;
+	font-size: 16px;
 }

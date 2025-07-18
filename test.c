@@ -78,6 +78,15 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 
 int main(int argc, char **argv) {
     gtk_init(&argc, &argv);
+	
+	//CSS
+	GtkCssProvider *provider = gtk_css_provider_new();
+	gtk_css_provider_load_from_path(provider, "style.css", NULL);
+	//
+	GdkDisplay *display = gdk_display_get_default();
+	GdkScreen *screen = gdk_display_get_default_screen(display);
+	gtk_style_context_add_provider_for_screen(screen, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
 
 	GPtrArray *keys_arr = g_ptr_array_new_with_free_func(g_free);
 
@@ -101,6 +110,7 @@ int main(int argc, char **argv) {
 
 	//Needs to be created now for the struct
     GtkWidget *title_label = gtk_label_new("");
+	gtk_style_context_add_class(gtk_widget_get_style_context(title_label), "title");
 
 	AppData data;
 	data.title_label = GTK_LABEL(title_label);
@@ -110,13 +120,6 @@ int main(int argc, char **argv) {
 
     g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &data);
 
-	//CSS
-	GtkCssProvider *css_provider = gtk_css_provider_new();
-	GdkScreen *screen = gdk_screen_get_default();
-	gtk_css_provider_load_from_file(css_provider, g_file_new_for_path("style.css"), NULL);
-
-	GtkStyleContext *window_context = gtk_widget_get_style_context(window);
-	GtkStyleContext *title_context = gtk_widget_get_style_context(title_label);
 
 	//Start of something
 	GtkWidget *grid = gtk_grid_new();
@@ -124,27 +127,47 @@ int main(int argc, char **argv) {
 	//Make labels for keys
 	GtkWidget *keys_labels[NUM_OF_KEYS];
 	GtkWidget *box_labels[NUM_OF_KEYS];
+	GtkWidget *app_labels[NUM_OF_KEYS];
+
+	GtkWidget *name_labels[NUM_OF_KEYS];
+	GtkWidget *word_labels[NUM_OF_KEYS];
 	for (int i = 0; i < NUM_OF_KEYS; i++) {
+		/*
 		//Make box
 		box_labels[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
 
 		//Make label
 		keys_labels[i] = gtk_label_new("mjau");
+		//app_labels[i] = gtk_label_new("voff");
+		app_labels[i] = gtk_image_new_from_icon_name("gvim", GTK_ICON_SIZE_BUTTON);
 
 		//Put label in box
 		gtk_box_pack_start(GTK_BOX(box_labels[i]), keys_labels[i], TRUE, TRUE, 0);
+		gtk_box_pack_start(GTK_BOX(box_labels[i]), app_labels[i], TRUE, TRUE, 0);
 
 		//Attach box to grid
 		gtk_grid_attach(GTK_GRID(grid), box_labels[i], i/4, i%4, 1, 1);
 
 		//Apply CSS styles
-		/*
-		gtk_style_context_add_class(box_labels, "key");
-		GtkStyleContext *keys_labels_context = gtk_widget_get_style_context(keys_labels[i]);
-		gtk_style_context_add_provider(keys_labels_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
+		gtk_style_context_add_class(gtk_widget_get_style_context(box_labels[i]), "key");
 		*/
-		GtkStyleContext *context = gtk_widget_get_style_context(box_labels[i]);
-		gtk_style_context_add_class(context, "key");
+
+		box_labels[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+		gtk_style_context_add_class(gtk_widget_get_style_context(box_labels[i]), "key");
+
+		app_labels[i] = gtk_image_new_from_icon_name("gvim", GTK_ICON_SIZE_BUTTON);
+		gtk_box_pack_start(GTK_BOX(box_labels[i]), app_labels[i], TRUE, TRUE, 0);
+		name_labels[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+		gtk_box_pack_start(GTK_BOX(box_labels[i]), name_labels[i], TRUE, TRUE, 0);
+
+		word_labels[i] = gtk_label_new("mjau");
+		gtk_box_pack_start(GTK_BOX(name_labels[i]), word_labels[i], TRUE, TRUE, 0);
+		gtk_style_context_add_class(gtk_widget_get_style_context(word_labels[i]), "word");
+		keys_labels[i] = gtk_label_new("N");
+		gtk_box_pack_start(GTK_BOX(name_labels[i]), keys_labels[i], TRUE, TRUE, 0);
+		gtk_style_context_add_class(gtk_widget_get_style_context(keys_labels[i]), "letter");
+
+		gtk_grid_attach(GTK_GRID(grid), box_labels[i], i/4, i%4, 1, 1);
 
 	}
 
@@ -158,8 +181,6 @@ int main(int argc, char **argv) {
 	//End of something
 	
 	//CSS2
-	gtk_style_context_add_provider(window_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
-	gtk_style_context_add_provider(title_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
