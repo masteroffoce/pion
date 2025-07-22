@@ -14,7 +14,7 @@ typedef struct {
 } AppData;
 
 gboolean eval_key(GPtrArray *keys_arr) {
-	if (print_json(keys_arr) == 0) {
+	if (exec_json(keys_arr) == 0) {
 		return FALSE;
 	} else {
 		return TRUE;
@@ -46,8 +46,14 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	AppData *data = (AppData *)user_data;
 
 	GPtrArray *keys_arr = data->keys_arr;
+	
+	//Placeholder, OK?
+	KeyBoard keyboard;
+	read_keyboard(keyboard);
+	fill_keyboard(keys_arr, keyboard);
+	printf("\n");
 
-    const gchar *keyname = gdk_keyval_name(event->keyval);
+	const gchar *keyname = gdk_keyval_name(event->keyval);
 	g_free(pressed_key);
 	pressed_key = g_strdup(keyname);
 	
@@ -78,9 +84,8 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 
 int main(int argc, char **argv) {
 
-	read_keyboard();
 
-    gtk_init(&argc, &argv);
+	gtk_init(&argc, &argv);
 	
 	//CSS
 	GtkCssProvider *provider = gtk_css_provider_new();
@@ -93,26 +98,26 @@ int main(int argc, char **argv) {
 
 	GPtrArray *keys_arr = g_ptr_array_new_with_free_func(g_free);
 
-    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "I hope no one sees this.");
-    gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
-    gtk_widget_set_size_request(window, 1500, 700);
+	GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(window), "I hope no one sees this.");
+	gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
+	gtk_widget_set_size_request(window, 1500, 700);
 
-    gtk_layer_init_for_window(GTK_WINDOW(window));
-    gtk_layer_set_layer(GTK_WINDOW(window), GTK_LAYER_SHELL_LAYER_TOP);
-    gtk_layer_set_keyboard_interactivity(GTK_WINDOW(window), TRUE);
-    gtk_layer_set_exclusive_zone(GTK_WINDOW(window), 0);
-    gtk_layer_set_anchor(GTK_WINDOW(window),
-                         GTK_LAYER_SHELL_EDGE_TOP |
-                         GTK_LAYER_SHELL_EDGE_LEFT,
-                         TRUE);
-    gtk_layer_set_margin(GTK_WINDOW(window), GTK_LAYER_SHELL_EDGE_TOP, 200);
+	gtk_layer_init_for_window(GTK_WINDOW(window));
+	gtk_layer_set_layer(GTK_WINDOW(window), GTK_LAYER_SHELL_LAYER_TOP);
+	gtk_layer_set_keyboard_interactivity(GTK_WINDOW(window), TRUE);
+	gtk_layer_set_exclusive_zone(GTK_WINDOW(window), 0);
+	gtk_layer_set_anchor(GTK_WINDOW(window),
+	                     GTK_LAYER_SHELL_EDGE_TOP |
+	                     GTK_LAYER_SHELL_EDGE_LEFT,
+	                     TRUE);
+	gtk_layer_set_margin(GTK_WINDOW(window), GTK_LAYER_SHELL_EDGE_TOP, 200);
 
-    gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
+	gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
 
 
 	//Needs to be created now for the struct
-    GtkWidget *title_label = gtk_label_new("");
+	GtkWidget *title_label = gtk_label_new("");
 	gtk_style_context_add_class(gtk_widget_get_style_context(title_label), "title");
 
 	AppData data;
@@ -121,7 +126,7 @@ int main(int argc, char **argv) {
 
 
 
-    g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &data);
+	g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &data);
 
 
 	//Start of something
@@ -175,8 +180,8 @@ int main(int argc, char **argv) {
 	}
 
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-    gtk_box_pack_start(GTK_BOX(box), title_label, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(box), grid, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box), title_label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), grid, TRUE, TRUE, 0);
 
 	gtk_container_add(GTK_CONTAINER(window), box);
 
@@ -185,11 +190,11 @@ int main(int argc, char **argv) {
 	
 	//CSS2
 
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 
-    gtk_widget_show_all(window);
-    gtk_main();
+	gtk_widget_show_all(window);
+	gtk_main();
 
 	for (guint i = 0; i < keys_arr->len; i++) {
 		printf("Key %u: %s\n", i, (char *)g_ptr_array_index(keys_arr, i));
@@ -198,7 +203,7 @@ int main(int argc, char **argv) {
 
 	//printf("Key: %s", pressed_key);
 	 
-    return 0;
+	return 0;
 
 }
 

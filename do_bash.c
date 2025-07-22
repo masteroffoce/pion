@@ -4,38 +4,16 @@
 #include <unistd.h>
 #include <cjson/cJSON.h>
 #include <gtk/gtk.h>
+#include "do_bash.h"
 
-#define MAX_KEYS 140
-#define MAX_KEY_LEN 10
-#define MAX_ROW_LEN 24
-#define MAX_KEYBOARD_HEIGHT 6
 
-typedef struct {
-	char name[50];
-	char key[MAX_KEY_LEN];
-	char icon_or_image[512];
-	char shell_or_app[1024];
-	int size;
-	int before;
-	int after;
-} Key;
-
-typedef struct {
-	Key keys[MAX_ROW_LEN];
-	int length;
-} KeyRow;
-
-typedef struct {
-	KeyRow keyrows[MAX_KEYBOARD_HEIGHT];
-	int height;
-} KeyBoard;
-
-void read_keyboard() {
+void read_keyboard(KeyBoard keyboard) {
 	char file_path[] = "keyboard.layout";
 	FILE *keyboard_file = fopen(file_path, "r");
 	char buffer[1024];
 	//int buffer_len = fread(buffer, 1, sizeof(buffer), keyboard_file);
-	KeyBoard keyboard;
+	//KeyBoard keyboard;
+	keyboard.height = 0;
 	int row = 0;
 	int col = 0;
 	
@@ -65,6 +43,7 @@ void read_keyboard() {
 			while (*p != '\0' && *p != ' ') { //Increment p while in word
 				if (*p == '\n') {
 					row++;
+					keyboard.height++;
 					col = -1;
 				}
 				p++;
@@ -94,6 +73,7 @@ void read_keyboard() {
 			keyboard.keyrows[row].keys[col-1].key[key_len] = '\0';
 			keyboard.keyrows[row].keys[col-1].before = spaces_before;
 			keyboard.keyrows[row].keys[col-1].after = spaces_after;
+			keyboard.keyrows[row].length = col;
 		}
 	}
 	fclose(keyboard_file);
@@ -105,8 +85,34 @@ void read_keyboard() {
 	}
 }
 
+void fill_keyboard(GPtrArray *keys_arr, KeyBoard keyboard) {
+	char file_path[256];
+	const char *xdg_config_home = getenv("HOME");
+	snprintf(file_path, sizeof(file_path), "%s/.config/pion/layout.json", xdg_config_home);
 
-int print_json(GPtrArray *keys_arr) {
+	FILE *layout_file = fopen(file_path, "r");
+	char buffer[65536];
+	int len = fread(buffer, 1, sizeof(buffer), layout_file);
+	(void)len;
+	fclose(layout_file);
+
+	cJSON *json = cJSON_Parse(buffer);
+
+	//Find correct path, the correct list of keys
+	for (guint i = 0; i < keys_arr->len; i++) {
+		json = cJSON_GetObjectItem(json, (char *) keys_arr->pdata[i]);
+	}
+
+	printf("\n->");
+	cJSON *key = json->child;
+	while(key) {
+		printf("%s ",key->string);
+		//printf("%s",cJSON_GetObjectItem(key, "name")->string);
+		key = key->next;
+	}
+}
+
+int exec_json(GPtrArray *keys_arr) {
 	
 	//Get the filepath
 	char file_path[256];
