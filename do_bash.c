@@ -5,6 +5,107 @@
 #include <cjson/cJSON.h>
 #include <gtk/gtk.h>
 
+#define MAX_KEYS 140
+#define MAX_KEY_LEN 10
+#define MAX_ROW_LEN 24
+#define MAX_KEYBOARD_HEIGHT 6
+
+typedef struct {
+	char name[50];
+	char key[MAX_KEY_LEN];
+	char icon_or_image[512];
+	char shell_or_app[1024];
+	int size;
+	int before;
+	int after;
+} Key;
+
+typedef struct {
+	Key keys[MAX_ROW_LEN];
+	int length;
+} KeyRow;
+
+typedef struct {
+	KeyRow keyrows[MAX_KEYBOARD_HEIGHT];
+	int height;
+} KeyBoard;
+
+void read_keyboard() {
+	char file_path[] = "keyboard.layout";
+	FILE *keyboard_file = fopen(file_path, "r");
+	char buffer[1024];
+	//int buffer_len = fread(buffer, 1, sizeof(buffer), keyboard_file);
+	KeyBoard keyboard;
+	int row = 0;
+	int col = 0;
+	
+	Key keys[MAX_KEYS];
+	int num_of_keys = 0;
+	while(fgets(buffer, sizeof(buffer), keyboard_file)) {
+		
+
+		char *p = buffer;
+
+		while (*p != '\0') {
+			if (num_of_keys > MAX_KEYS) {
+				printf("Too many keys!");
+				break;
+			}
+
+			int spaces_before = 0;
+			while (*p == ' ') {
+				spaces_before++;
+				p++;
+			}
+
+			if (*p == '\0') break;
+
+			char *start = p;
+
+			while (*p != '\0' && *p != ' ') { //Increment p while in word
+				if (*p == '\n') {
+					row++;
+					col = -1;
+				}
+				p++;
+			}
+
+			int key_len = p - start;
+			if (key_len > MAX_KEY_LEN-1) key_len = MAX_KEY_LEN-1;
+
+			int spaces_after = 0;
+			while (*p == ' ') {
+				spaces_after++;
+				p++;
+			}
+
+			memcpy(keys[num_of_keys].key, start, key_len);
+			keys[num_of_keys].key[key_len] = '\0';
+			keys[num_of_keys].before = spaces_before;
+			keys[num_of_keys].after = spaces_after;
+
+			num_of_keys++;
+			p -= spaces_after;
+			col++;
+
+			//Add key to the big keyboard struct
+			//printf("\n%d",key_len);
+			memcpy(keyboard.keyrows[row].keys[col-1].key, start, key_len);
+			keyboard.keyrows[row].keys[col-1].key[key_len] = '\0';
+			keyboard.keyrows[row].keys[col-1].before = spaces_before;
+			keyboard.keyrows[row].keys[col-1].after = spaces_after;
+		}
+	}
+	fclose(keyboard_file);
+
+	for (int i = 0; i < num_of_keys; i++) {
+		
+		//printf("Key: %s Before: %d After: %d\n", keys[i].key, keys[i].before, keys[i].after);
+		
+	}
+}
+
+
 int print_json(GPtrArray *keys_arr) {
 	
 	//Get the filepath

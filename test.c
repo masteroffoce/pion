@@ -77,6 +77,9 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 }
 
 int main(int argc, char **argv) {
+
+	read_keyboard();
+
     gtk_init(&argc, &argv);
 	
 	//CSS
