@@ -6,8 +6,40 @@
 #include <gtk/gtk.h>
 #include "do_bash.h"
 
+void read_keyboard(KeyBoard *keyboard) {
+	char file_path[] = "keyboard.layout";
+	FILE *keyboard_file = fopen(file_path, "r");
+	char buffer[1024];
 
-void read_keyboard(KeyBoard keyboard) {
+	keyboard->height = 0;
+	
+	while(fgets(buffer, sizeof(buffer), keyboard_file)) {
+		char *p = buffer;
+		int col = 0;
+
+		while (*p != '\0' && *p != '\n') {
+			while (*p == ' ') p++; //Go to start of word
+			char *start = p; //Record start of word
+			while (*p != ' ' && *p != '\n' && *p != '\0') p++; //Go to end of word
+
+			size_t len = p - start; //Record length of key name
+			memcpy(keyboard->keyrows[keyboard->height].keys[col].key,start,len); //Copy key name to keyboard strut
+			keyboard->keyrows[keyboard->height].length++; //Increase length of keyrow with added key
+			col++; 
+			if (*p == '\n') { //If last key of line
+				col = 0;
+				keyboard->height++;
+				keyboard->keyrows[keyboard->height].length = 0;
+			}
+
+			
+		}
+	}
+
+	fclose(keyboard_file);
+}
+
+void reed_keyboard(KeyBoard keyboard) {
 	char file_path[] = "keyboard.layout";
 	FILE *keyboard_file = fopen(file_path, "r");
 	char buffer[1024];

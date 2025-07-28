@@ -11,6 +11,12 @@ char *pressed_key = NULL;
 typedef struct {
 	GtkLabel *title_label;
 	GPtrArray *keys_arr;
+
+	//GtkWidget *keys_labels;
+	//GtkWidget *box_labels;
+	//GtkWidget *app_labels;
+	//GtkWidget *name_labels;
+	//GtkWidget *word_labels;
 } AppData;
 
 gboolean eval_key(GPtrArray *keys_arr) {
@@ -49,9 +55,12 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	
 	//Placeholder, OK?
 	KeyBoard keyboard;
-	read_keyboard(keyboard);
-	fill_keyboard(keys_arr, keyboard);
+	read_keyboard(&keyboard);
+	printf("%d",keyboard.height);
+	//fill_keyboard(keys_arr, keyboard);
 	printf("\n");
+
+	printf("\\%s\\",keyboard.keyrows[4].keys[8].key);
 
 	const gchar *keyname = gdk_keyval_name(event->keyval);
 	g_free(pressed_key);

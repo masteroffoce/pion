@@ -26,7 +26,7 @@ typedef struct {
 	int height;
 } KeyBoard;
 
-void read_keyboard(KeyBoard keyboard);
+void read_keyboard(KeyBoard *keyboard);
 void fill_keyboard(GPtrArray *keys_arr, KeyBoard keyboard);
 
 int exec_json(GPtrArray *keys_arr);
