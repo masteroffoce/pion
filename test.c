@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define BACK_KEY "BackSpace"
-#define NUM_OF_KEYS 16
+#define NUM_OF_KEYS 102
 
 char *pressed_key = NULL;
 
@@ -12,11 +12,11 @@ typedef struct {
 	GtkLabel *title_label;
 	GPtrArray *keys_arr;
 
-	//GtkWidget *keys_labels;
-	//GtkWidget *box_labels;
-	//GtkWidget *app_labels;
-	//GtkWidget *name_labels;
-	//GtkWidget *word_labels;
+	GtkWidget **keys_labels;
+	GtkWidget **box_labels;
+	GtkWidget **app_labels;
+	GtkWidget **name_labels;
+	GtkWidget **word_labels;
 } AppData;
 
 gboolean eval_key(GPtrArray *keys_arr) {
@@ -56,11 +56,20 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	//Placeholder, OK?
 	KeyBoard keyboard;
 	read_keyboard(&keyboard);
-	printf("%d",keyboard.height);
 	//fill_keyboard(keys_arr, keyboard);
-	printf("\n");
 
-	printf("\\%s\\",keyboard.keyrows[4].keys[8].key);
+	//printf("\\%s\\",keyboard.keyrows[4].keys[8].key);
+	
+
+	gtk_label_set_text(GTK_LABEL(data->word_labels[0]), "PFW");
+	//Make grid...
+	for (int row = 0; row < keyboard.height; row++) {
+		for (int key = 0; key < keyboard.keyrows[row].length; key++) {
+			//printf(" %s ",keyboard.keyrows[row].keys[key].key);
+
+
+		}
+	}
 
 	const gchar *keyname = gdk_keyval_name(event->keyval);
 	g_free(pressed_key);
@@ -129,13 +138,6 @@ int main(int argc, char **argv) {
 	GtkWidget *title_label = gtk_label_new("");
 	gtk_style_context_add_class(gtk_widget_get_style_context(title_label), "title");
 
-	AppData data;
-	data.title_label = GTK_LABEL(title_label);
-	data.keys_arr = keys_arr;
-
-
-
-	g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &data);
 
 
 	//Start of something
@@ -148,31 +150,39 @@ int main(int argc, char **argv) {
 
 	GtkWidget *name_labels[NUM_OF_KEYS];
 	GtkWidget *word_labels[NUM_OF_KEYS];
-	for (int i = 0; i < NUM_OF_KEYS; i++) {
-		/*
-		//Make box
+
+	KeyBoard keyboarid;
+	read_keyboard(&keyboarid);
+
+	int i = 0;
+	for (int row = 0; row < keyboarid.height; row++) {
+		for (int col = 0; col < keyboarid.keyrows[row].length; col++) {
+			box_labels[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+			gtk_style_context_add_class(gtk_widget_get_style_context(box_labels[i]), "key");
+			
+			keys_labels[i] = gtk_label_new(keyboarid.keyrows[row].keys[col].key);
+			gtk_box_pack_start(GTK_BOX(box_labels[i]), keys_labels[i], TRUE, TRUE, 0);
+			gtk_style_context_add_class(gtk_widget_get_style_context(keys_labels[i]), "letter");
+			name_labels[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+			gtk_box_pack_start(GTK_BOX(box_labels[i]), name_labels[i], TRUE, TRUE, 0);
+
+			word_labels[i] = gtk_label_new(keyboarid.keyrows[row].keys[col].name);
+			gtk_box_pack_start(GTK_BOX(name_labels[i]), word_labels[i], TRUE, TRUE, 0);
+			gtk_style_context_add_class(gtk_widget_get_style_context(word_labels[i]), "word");
+			//keys_labels[i] = gtk_label_new("N");
+			app_labels[i] = gtk_image_new_from_icon_name("librewolf", GTK_ICON_SIZE_BUTTON);
+			gtk_box_pack_start(GTK_BOX(name_labels[i]), app_labels[i], TRUE, TRUE, 0);
+
+			gtk_grid_attach(GTK_GRID(grid), box_labels[i], col, row, 1, 1);
+			i++;
+		}
+	}
+
+	/*for (int i = 0; i < NUM_OF_KEYS; i++) {
 		box_labels[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-
-		//Make label
-		keys_labels[i] = gtk_label_new("mjau");
-		//app_labels[i] = gtk_label_new("voff");
-		app_labels[i] = gtk_image_new_from_icon_name("gvim", GTK_ICON_SIZE_BUTTON);
-
-		//Put label in box
-		gtk_box_pack_start(GTK_BOX(box_labels[i]), keys_labels[i], TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(box_labels[i]), app_labels[i], TRUE, TRUE, 0);
-
-		//Attach box to grid
-		gtk_grid_attach(GTK_GRID(grid), box_labels[i], i/4, i%4, 1, 1);
-
-		//Apply CSS styles
-		gtk_style_context_add_class(gtk_widget_get_style_context(box_labels[i]), "key");
-		*/
-
-		box_labels[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
 		gtk_style_context_add_class(gtk_widget_get_style_context(box_labels[i]), "key");
 
-		app_labels[i] = gtk_image_new_from_icon_name("gvim", GTK_ICON_SIZE_BUTTON);
+		app_labels[i] = gtk_image_new_from_icon_name("librewolf", GTK_ICON_SIZE_BUTTON);
 		gtk_box_pack_start(GTK_BOX(box_labels[i]), app_labels[i], TRUE, TRUE, 0);
 		name_labels[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
 		gtk_box_pack_start(GTK_BOX(box_labels[i]), name_labels[i], TRUE, TRUE, 0);
@@ -184,9 +194,19 @@ int main(int argc, char **argv) {
 		gtk_box_pack_start(GTK_BOX(name_labels[i]), keys_labels[i], TRUE, TRUE, 0);
 		gtk_style_context_add_class(gtk_widget_get_style_context(keys_labels[i]), "letter");
 
-		gtk_grid_attach(GTK_GRID(grid), box_labels[i], i/4, i%4, 1, 1);
+		gtk_grid_attach(GTK_GRID(grid), box_labels[i], i/6, i%6, 1, 1);
+	}*/
 
-	}
+	AppData data;
+	data.title_label = GTK_LABEL(title_label);
+	data.keys_arr = keys_arr;
+	data.box_labels = box_labels;
+	data.app_labels = app_labels;
+	data.name_labels = name_labels;
+	data.word_labels = word_labels;
+	data.keys_labels = keys_labels;
+	g_signal_connect(window, "key-press-event", G_CALLBACK(on_key_press), &data);
+
 
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
 	gtk_box_pack_start(GTK_BOX(box), title_label, FALSE, FALSE, 0);
@@ -194,10 +214,6 @@ int main(int argc, char **argv) {
 
 	gtk_container_add(GTK_CONTAINER(window), box);
 
-
-	//End of something
-	
-	//CSS2
 
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 

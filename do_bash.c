@@ -24,8 +24,12 @@ void read_keyboard(KeyBoard *keyboard) {
 
 			size_t len = p - start; //Record length of key name
 			memcpy(keyboard->keyrows[keyboard->height].keys[col].key,start,len); //Copy key name to keyboard strut
+			keyboard->keyrows[keyboard->height].keys[col].key[len] = '\0'; //Null-terminate string
 			keyboard->keyrows[keyboard->height].length++; //Increase length of keyrow with added key
+			strcpy(keyboard->keyrows[keyboard->height].keys[col].name,"cool");
 			col++; 
+
+
 			if (*p == '\n') { //If last key of line
 				col = 0;
 				keyboard->height++;
