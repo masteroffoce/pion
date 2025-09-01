@@ -101,7 +101,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 }
 
 int main(int argc, char **argv) {
-	init();
+	init_do_bash();
 
 
 	gtk_init(&argc, &argv);

@@ -6,18 +6,15 @@
 #include <gtk/gtk.h>
 #include "do_bash.h"
 
-void init() {
+void init_do_bash() {
 	const char *xdg_config_home = getenv("HOME");
 	char file_path[256];
 	snprintf(file_path, sizeof(file_path), "%s/.config/pion", xdg_config_home);
 	chdir(file_path);
-	printf("%s", file_path);
-	system("pwd");
 }
 
 void read_keyboard(KeyBoard *keyboard) {
-	char file_path[] = "keyboard.layout";
-	FILE *keyboard_file = fopen(file_path, "r");
+	FILE *keyboard_file = fopen("keyboard.layout", "r");
 	char buffer[1024];
 
 	keyboard->height = 0;
@@ -53,15 +50,7 @@ void read_keyboard(KeyBoard *keyboard) {
 }
 
 void fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard) {
-	/*
-	char file_path[256];
-	const char *xdg_config_home = getenv("HOME");
-	snprintf(file_path, sizeof(file_path), "%s/.config/pion/layout.json", xdg_config_home);
-	*/
-	char *file_path = "layout.json";
-	system("pwd");
-
-	FILE *layout_file = fopen(file_path, "r");
+	FILE *layout_file = fopen("layout.json", "r");
 	char buffer[65536];
 	int len = fread(buffer, 1, sizeof(buffer), layout_file);
 	(void)len;
