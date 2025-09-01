@@ -140,6 +140,10 @@ int main(int argc, char **argv) {
 	gtk_style_context_add_class(gtk_widget_get_style_context(title_label), "title");
 
 
+	//CSS for background
+	gtk_style_context_add_class(gtk_widget_get_style_context(window), "screen");
+
+
 
 	//Start of something
 	GtkWidget *grid = gtk_grid_new();
