@@ -10,6 +10,7 @@ all: $(TARGET)
 
 $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $@ $(LDFLAGS)
+	rm $(OBJ)
 
 -include $(DEP)
 

@@ -6,6 +6,8 @@
 #define MAX_ROW_LEN 24
 #define MAX_KEYBOARD_HEIGHT 6
 
+void init();
+
 typedef struct {
 	char name[50];
 	char key[MAX_KEY_LEN];
@@ -27,7 +29,7 @@ typedef struct {
 } KeyBoard;
 
 void read_keyboard(KeyBoard *keyboard);
-void fill_keyboard(GPtrArray *keys_arr, KeyBoard keyboard);
+void fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard);
 
 int exec_json(GPtrArray *keys_arr);
 GPtrArray* presuffix_keys_arr(GPtrArray *keys_arr);

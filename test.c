@@ -14,7 +14,6 @@ typedef struct {
 
 	GtkWidget **keys_labels;
 	GtkWidget **box_labels;
-	GtkWidget **app_labels;
 	GtkWidget **name_labels;
 	GtkWidget **word_labels;
 } AppData;
@@ -56,7 +55,8 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	//Placeholder, OK?
 	KeyBoard keyboard;
 	read_keyboard(&keyboard);
-	//fill_keyboard(keys_arr, keyboard);
+	fill_keyboard(keys_arr, &keyboard);
+	printf("\n");
 
 	//printf("\\%s\\",keyboard.keyrows[4].keys[8].key);
 	
@@ -101,6 +101,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 }
 
 int main(int argc, char **argv) {
+	init();
 
 
 	gtk_init(&argc, &argv);
@@ -146,7 +147,6 @@ int main(int argc, char **argv) {
 	//Make labels for keys
 	GtkWidget *keys_labels[NUM_OF_KEYS];
 	GtkWidget *box_labels[NUM_OF_KEYS];
-	GtkWidget *app_labels[NUM_OF_KEYS];
 
 	GtkWidget *name_labels[NUM_OF_KEYS];
 	GtkWidget *word_labels[NUM_OF_KEYS];
@@ -170,38 +170,16 @@ int main(int argc, char **argv) {
 			gtk_box_pack_start(GTK_BOX(name_labels[i]), word_labels[i], TRUE, TRUE, 0);
 			gtk_style_context_add_class(gtk_widget_get_style_context(word_labels[i]), "word");
 			//keys_labels[i] = gtk_label_new("N");
-			app_labels[i] = gtk_image_new_from_icon_name("librewolf", GTK_ICON_SIZE_BUTTON);
-			gtk_box_pack_start(GTK_BOX(name_labels[i]), app_labels[i], TRUE, TRUE, 0);
 
 			gtk_grid_attach(GTK_GRID(grid), box_labels[i], col, row, 1, 1);
 			i++;
 		}
 	}
 
-	/*for (int i = 0; i < NUM_OF_KEYS; i++) {
-		box_labels[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
-		gtk_style_context_add_class(gtk_widget_get_style_context(box_labels[i]), "key");
-
-		app_labels[i] = gtk_image_new_from_icon_name("librewolf", GTK_ICON_SIZE_BUTTON);
-		gtk_box_pack_start(GTK_BOX(box_labels[i]), app_labels[i], TRUE, TRUE, 0);
-		name_labels[i] = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
-		gtk_box_pack_start(GTK_BOX(box_labels[i]), name_labels[i], TRUE, TRUE, 0);
-
-		word_labels[i] = gtk_label_new("mjau");
-		gtk_box_pack_start(GTK_BOX(name_labels[i]), word_labels[i], TRUE, TRUE, 0);
-		gtk_style_context_add_class(gtk_widget_get_style_context(word_labels[i]), "word");
-		keys_labels[i] = gtk_label_new("N");
-		gtk_box_pack_start(GTK_BOX(name_labels[i]), keys_labels[i], TRUE, TRUE, 0);
-		gtk_style_context_add_class(gtk_widget_get_style_context(keys_labels[i]), "letter");
-
-		gtk_grid_attach(GTK_GRID(grid), box_labels[i], i/6, i%6, 1, 1);
-	}*/
-
 	AppData data;
 	data.title_label = GTK_LABEL(title_label);
 	data.keys_arr = keys_arr;
 	data.box_labels = box_labels;
-	data.app_labels = app_labels;
 	data.name_labels = name_labels;
 	data.word_labels = word_labels;
 	data.keys_labels = keys_labels;
