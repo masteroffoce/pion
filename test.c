@@ -61,7 +61,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	//printf("\\%s\\",keyboard.keyrows[4].keys[8].key);
 	
 
-	gtk_label_set_text(GTK_LABEL(data->word_labels[0]), "PFW");
+	//gtk_label_set_text(GTK_LABEL(data->word_labels[0]), "PFW"); //This line emits a warning
 	//Make grid...
 	for (int row = 0; row < keyboard.height; row++) {
 		for (int key = 0; key < keyboard.keyrows[row].length; key++) {
@@ -90,6 +90,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	GPtrArray* fixxed = presuffix_keys_arr(keys_arr);
 	char * keys_so_far_string = string_from_keys_arr(fixxed);
 	gtk_label_set_text(data->title_label, keys_so_far_string);
+	free(keys_so_far_string);
 
 	//g_print("Key: %s\n", keyname);
 
@@ -174,20 +175,7 @@ int main(int argc, char **argv) {
 			word_labels[i] = gtk_label_new(keyboarid.keyrows[row].keys[col].name);
 			gtk_box_pack_start(GTK_BOX(name_labels[i]), word_labels[i], TRUE, TRUE, 0);
 			gtk_style_context_add_class(gtk_widget_get_style_context(word_labels[i]), "word");
-			//keys_labels[i] = gtk_label_new("N");
 
-			/*
-			if (strcmp(keyboarid.keyrows[row].keys[col].key, "space") == 0) {
-				gtk_grid_attach(GTK_GRID(grid), box_labels[i], col + offset, row, 6, 1);
-				offset += 5;
-			} else if (strcmp(keyboarid.keyrows[row].keys[col].key, "home") == 0) {
-				gtk_grid_attach(GTK_GRID(grid), box_labels[i], col + offset, row, 2, 1);
-				offset += 1;
-			}
-			else {
-				gtk_grid_attach(GTK_GRID(grid), box_labels[i], col + offset, row, 1, 1);
-			}
-			*/
 			int keywidth = keyboarid.keyrows[row].keys[col].size;
 			gtk_grid_attach(GTK_GRID(grid), box_labels[i], col + offset, row, keywidth, 1);
 			offset += keywidth - 1;

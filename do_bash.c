@@ -46,7 +46,7 @@ void read_keyboard(KeyBoard *keyboard) {
 			if (*p == '\n') { //If last key of line
 				col = 0;
 				keyboard->height++;
-				keyboard->keyrows[keyboard->height].length = 0;
+				keyboard->keyrows[keyboard->height].length = 0; //Segfaults sometimes
 			}
 
 			
@@ -104,7 +104,7 @@ int exec_json(GPtrArray *keys_arr) {
 	if (cJSON_IsString(shell)) {
 		int return_value = system(shell->valuestring);
 		(void) return_value;
-		exit(1);
+		exit(0);
 	}
 
 	//Otherwise, exit the program

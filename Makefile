@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -O2 $(shell pkg-config --cflags gtk+-3.0 gtk-layer-shell-0) $(shell pkg-config --cflags libcjson)
+CFLAGS = -Wall -Wextra -O2 $(shell pkg-config --cflags gtk+-3.0 gtk-layer-shell-0) $(shell pkg-config --cflags libcjson) -g
 LDFLAGS = $(shell pkg-config --libs gtk+-3.0 gtk-layer-shell-0) $(shell pkg-config --libs libcjson)
 TARGET = run
 SRC = test.c do_bash.c
@@ -10,7 +10,9 @@ all: $(TARGET)
 
 $(TARGET): $(OBJ)
 	$(CC) $(OBJ) -o $@ $(LDFLAGS)
-	rm $(OBJ)
+
+test: $(TARGET)
+	./$(TARGET)
 
 -include $(DEP)
 
