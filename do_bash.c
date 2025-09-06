@@ -43,7 +43,7 @@ void read_keyboard(KeyBoard *keyboard) {
 			col++; 
 
 
-			if (*p == '\n') { //If last key of line
+			if (*p == '\n' && ! (*(p+1))) { //If last key of line
 				col = 0;
 				keyboard->height++;
 				keyboard->keyrows[keyboard->height].length = 0; //Segfaults sometimes
