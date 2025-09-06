@@ -3,8 +3,9 @@
 #include "do_bash.h"
 #include <string.h>
 
-#define BACK_KEY "BackSpace"
-#define NUM_OF_KEYS 102
+static char * BACK_KEY = "BackSpace";
+static int WIDTH = 1700;
+static int HEIGHT = 600;
 
 char *pressed_key = NULL;
 
@@ -121,7 +122,7 @@ int main(int argc, char **argv) {
 	GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), "I hope no one sees this.");
 	gtk_window_set_default_size(GTK_WINDOW(window), 300, 150);
-	gtk_widget_set_size_request(window, 1500, 700);
+	gtk_widget_set_size_request(window, WIDTH, HEIGHT);
 
 	gtk_layer_init_for_window(GTK_WINDOW(window));
 	gtk_layer_set_layer(GTK_WINDOW(window), GTK_LAYER_SHELL_LAYER_TOP);
@@ -150,11 +151,11 @@ int main(int argc, char **argv) {
 	GtkWidget *grid = gtk_grid_new();
 
 	//Make labels for keys
-	GtkWidget *keys_labels[NUM_OF_KEYS];
-	GtkWidget *box_labels[NUM_OF_KEYS];
+	GtkWidget *keys_labels[MAX_KEYS];
+	GtkWidget *box_labels[MAX_KEYS];
 
-	GtkWidget *name_labels[NUM_OF_KEYS];
-	GtkWidget *word_labels[NUM_OF_KEYS];
+	GtkWidget *name_labels[MAX_KEYS];
+	GtkWidget *word_labels[MAX_KEYS];
 
 	KeyBoard keyboarid;
 	read_keyboard(&keyboarid);
