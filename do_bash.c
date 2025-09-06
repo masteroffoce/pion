@@ -10,7 +10,11 @@ void init_do_bash() {
 	const char *xdg_config_home = getenv("HOME");
 	char file_path[256];
 	snprintf(file_path, sizeof(file_path), "%s/.config/pion", xdg_config_home);
-	chdir(file_path);
+	int result = chdir(file_path);
+	if (result) {
+		printf("Couldn't find pion in .config");
+		exit(1);
+	}
 }
 
 void read_keyboard(KeyBoard *keyboard) {
@@ -25,6 +29,8 @@ void read_keyboard(KeyBoard *keyboard) {
 
 		while (*p != '\0' && *p != '\n') {
 			while (*p == ' ') p++; //Go to start of word
+			char size = 0; //Size of the current char (underscores before)
+			while (*p == '_') { p++; size++; } //Go to beginning of real name, skip underscores
 			char *start = p; //Record start of word
 			while (*p != ' ' && *p != '\n' && *p != '\0') p++; //Go to end of word
 
@@ -33,6 +39,7 @@ void read_keyboard(KeyBoard *keyboard) {
 			keyboard->keyrows[keyboard->height].keys[col].key[len] = '\0'; //Null-terminate string
 			keyboard->keyrows[keyboard->height].length++; //Increase length of keyrow with added key
 			strcpy(keyboard->keyrows[keyboard->height].keys[col].name,"cool");
+			keyboard->keyrows[keyboard->height].keys[col].size = size + 1;
 			col++; 
 
 
@@ -50,6 +57,7 @@ void read_keyboard(KeyBoard *keyboard) {
 }
 
 void fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard) {
+	(void)keyboard;
 	FILE *layout_file = fopen("layout.json", "r");
 	char buffer[65536];
 	int len = fread(buffer, 1, sizeof(buffer), layout_file);
@@ -73,14 +81,8 @@ void fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard) {
 }
 
 int exec_json(GPtrArray *keys_arr) {
-	
-	//Get the filepath
-	char file_path[256];
-	const char *xdg_config_home = getenv("HOME");
-	snprintf(file_path, sizeof(file_path), "%s/.config/pion/layout.json", xdg_config_home);
-
 	//Open the config file
-	FILE *layout_file = fopen(file_path, "r");
+	FILE *layout_file = fopen("layout.json", "r");
 	char buffer[65536];
 	int len = fread(buffer, 1, sizeof(buffer), layout_file);
 	(void)len;

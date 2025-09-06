@@ -160,7 +160,8 @@ int main(int argc, char **argv) {
 
 	int i = 0;
 	for (int row = 0; row < keyboarid.height; row++) {
-		for (int col = 0; col < keyboarid.keyrows[row].length; col++) {
+		int offset = 0;
+			for (int col = 0; col < keyboarid.keyrows[row].length; col++) {
 			box_labels[i] = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
 			gtk_style_context_add_class(gtk_widget_get_style_context(box_labels[i]), "key");
 			
@@ -175,7 +176,22 @@ int main(int argc, char **argv) {
 			gtk_style_context_add_class(gtk_widget_get_style_context(word_labels[i]), "word");
 			//keys_labels[i] = gtk_label_new("N");
 
-			gtk_grid_attach(GTK_GRID(grid), box_labels[i], col, row, 1, 1);
+			/*
+			if (strcmp(keyboarid.keyrows[row].keys[col].key, "space") == 0) {
+				gtk_grid_attach(GTK_GRID(grid), box_labels[i], col + offset, row, 6, 1);
+				offset += 5;
+			} else if (strcmp(keyboarid.keyrows[row].keys[col].key, "home") == 0) {
+				gtk_grid_attach(GTK_GRID(grid), box_labels[i], col + offset, row, 2, 1);
+				offset += 1;
+			}
+			else {
+				gtk_grid_attach(GTK_GRID(grid), box_labels[i], col + offset, row, 1, 1);
+			}
+			*/
+			int keywidth = keyboarid.keyrows[row].keys[col].size;
+			gtk_grid_attach(GTK_GRID(grid), box_labels[i], col + offset, row, keywidth, 1);
+			offset += keywidth - 1;
+			gtk_widget_set_hexpand(box_labels[i], TRUE);
 			i++;
 		}
 	}
