@@ -11,7 +11,6 @@ void init_do_bash();
 typedef struct {
 	char name[50];
 	char key[MAX_KEY_LEN];
-	char icon_or_image[512];
 	char shell_or_app[1024];
 	int size;
 	int before;

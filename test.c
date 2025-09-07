@@ -2,10 +2,12 @@
 #include <gtk-layer-shell.h>
 #include "do_bash.h"
 #include <string.h>
+#include <cjson/cJSON.h>
 
 static char * BACK_KEY = "BackSpace";
 static int WIDTH = 1700;
 static int HEIGHT = 600;
+static int MARGIN = 200;
 
 char *pressed_key = NULL;
 
@@ -19,6 +21,25 @@ typedef struct {
 	GtkWidget **word_labels;
 } AppData;
 
+void init_settings() {
+	FILE *settings_file = fopen("settings.json", "r");
+	char buffer[4096];
+	int len = fread(buffer, 1, sizeof(buffer), settings_file);
+	(void)len;
+	fclose(settings_file);
+
+	const cJSON *json = NULL;
+	json = cJSON_Parse(buffer);
+
+	cJSON *window = cJSON_GetObjectItemCaseSensitive(json, "window");
+
+	WIDTH = (int)cJSON_GetObjectItemCaseSensitive(window, "width")->valuedouble;
+	HEIGHT = (int)cJSON_GetObjectItemCaseSensitive(window, "height")->valuedouble;
+	MARGIN = (int)cJSON_GetObjectItemCaseSensitive(window, "text")->valuedouble;
+
+	free(window);
+}
+
 gboolean eval_key(GPtrArray *keys_arr) {
 	if (exec_json(keys_arr) == 0) {
 		return FALSE;
@@ -30,7 +51,7 @@ gboolean eval_key(GPtrArray *keys_arr) {
 //Convert GPtrArray to string
 char * string_from_keys_arr(GPtrArray *keys_arr) { 
 	size_t len = 1; //Make space for the null terminator
-	for (uint i = 0; i < keys_arr->len; i++) {
+	for (unsigned int i = 0; i < keys_arr->len; i++) {
 		char *key = (char *)g_ptr_array_index(keys_arr, i);
 		len += strlen(key);
 	}
@@ -38,7 +59,7 @@ char * string_from_keys_arr(GPtrArray *keys_arr) {
 	char *buffer = malloc(len);
 
 	buffer[0] = '\0';
-	for (uint i = 0; i < keys_arr->len; i++) {
+	for (unsigned int i = 0; i < keys_arr->len; i++) {
 		char *key = (char *)g_ptr_array_index(keys_arr, i);
 		strcat(buffer, key);
 	}
@@ -104,6 +125,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 
 int main(int argc, char **argv) {
 	init_do_bash();
+	init_settings();
 
 
 	gtk_init(&argc, &argv);
@@ -132,7 +154,7 @@ int main(int argc, char **argv) {
 	                     GTK_LAYER_SHELL_EDGE_TOP |
 	                     GTK_LAYER_SHELL_EDGE_LEFT,
 	                     TRUE);
-	gtk_layer_set_margin(GTK_WINDOW(window), GTK_LAYER_SHELL_EDGE_TOP, 200);
+	gtk_layer_set_margin(GTK_WINDOW(window), GTK_LAYER_SHELL_EDGE_TOP, MARGIN);
 
 	gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
 

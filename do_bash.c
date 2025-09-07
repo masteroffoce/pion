@@ -7,9 +7,16 @@
 #include "do_bash.h"
 
 void init_do_bash() {
-	const char *xdg_config_home = getenv("HOME");
+	char buffer[250];
+	const char *xdg_config_home = getenv("XDG_CONFIG_HOME");
+	if (xdg_config_home) {
+		snprintf(buffer, sizeof(buffer), "%s", xdg_config_home);
+	} else {
+		const char *home = getenv("HOME");
+		snprintf(buffer, sizeof(buffer), "%s/.config", home);
+	}
 	char file_path[256];
-	snprintf(file_path, sizeof(file_path), "%s/.config/pion", xdg_config_home);
+	snprintf(file_path, sizeof(file_path), "%s/pion", buffer);
 	int result = chdir(file_path);
 	if (result) {
 		printf("Couldn't find pion in .config");
@@ -124,7 +131,7 @@ int exec_json(GPtrArray *keys_arr) {
 GPtrArray* presuffix_keys_arr(GPtrArray *keys_arr) {
 	GPtrArray *fixxed;
 	fixxed = g_ptr_array_new_with_free_func((GDestroyNotify)g_free);
-	for (uint i = 0; i < keys_arr->len; i++) {
+	for (unsigned int i = 0; i < keys_arr->len; i++) {
 		char* keys_arr_elem = g_ptr_array_index(keys_arr, i); //Define current key
 
 		//Add pre- and suffixes if the key isn't a letter or number
