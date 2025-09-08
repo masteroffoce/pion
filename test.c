@@ -110,6 +110,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 
 	if (strcmp(pressed_key, ABORT_KEY) == 0)
 		gtk_main_quit();
+
 	
 	//If pressed key is backspace, remove the last pressed key
 	if (strcmp(pressed_key, BACK_KEY) == 0) {
@@ -122,9 +123,21 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 				gtk_main_quit();
 			}
 		}
-	} else { //Else, add pressed key to list
+	} else { //Else, add pressed key to list. Key is not BACK_KEY
 		//Not if non-relevant key
 		g_ptr_array_add(keys_arr, g_strdup(keyname));
+	}
+
+	//Checks if the key is accepted
+	int res = eval_key(keys_arr);
+	if (res == 1) {
+		if (QUIT_ON_WRONG_KEY == 1)
+			gtk_main_quit();
+		if (QUIT_ON_WRONG_KEY == 0) {
+			//Remove just added element, this funcon call has led to nothing
+			g_ptr_array_remove_index(keys_arr, keys_arr->len-1);
+			return TRUE; //Skip updating the label
+		}
 	}
 
 	GPtrArray* fixxed = presuffix_keys_arr(keys_arr);
@@ -133,13 +146,6 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	free(keys_so_far_string);
 
 	//g_print("Key: %s\n", keyname);
-
-	int res = eval_key(keys_arr);
-	if (res == 1) {
-		if (QUIT_ON_WRONG_KEY == 1)
-			gtk_main_quit();
-		printf("%d", res);
-	}
 
 	return TRUE;
 }
