@@ -5,6 +5,7 @@
 #include <cjson/cJSON.h>
 
 static char * BACK_KEY = "BackSpace";
+static char * ABORT_KEY = "backslash";
 static int WIDTH = 1700;
 static int HEIGHT = 600;
 static int MARGIN = 200;
@@ -44,6 +45,7 @@ void init_settings() {
 
 	BACK_KEY = cJSON_GetObjectItemCaseSensitive(keys, "back")->valuestring;
 	QUIT_ON_WRONG_KEY = cJSON_GetObjectItemCaseSensitive(keys, "quit_on_wrong")->valueint;
+	ABORT_KEY = cJSON_GetObjectItemCaseSensitive(keys, "abort_key")->valuestring;
 
 	free(keys);
 	free(window);
@@ -105,6 +107,9 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	const gchar *keyname = gdk_keyval_name(event->keyval);
 	g_free(pressed_key);
 	pressed_key = g_strdup(keyname);
+
+	if (strcmp(pressed_key, ABORT_KEY) == 0)
+		gtk_main_quit();
 	
 	//If pressed key is backspace, remove the last pressed key
 	if (strcmp(pressed_key, BACK_KEY) == 0) {
@@ -114,7 +119,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 		} else {
 			//gtk_main_quit();
 			if (QUIT_ON_WRONG_KEY == 1) {
-				exit(1);
+				gtk_main_quit();
 			}
 		}
 	} else { //Else, add pressed key to list
