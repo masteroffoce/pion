@@ -9,6 +9,7 @@ static int WIDTH = 1700;
 static int HEIGHT = 600;
 static int MARGIN = 200;
 static char ON_WRONG_KEY = 0;
+static char CENTER = 0;
 
 char *pressed_key = NULL;
 
@@ -37,6 +38,7 @@ void init_settings() {
 	WIDTH = cJSON_GetObjectItemCaseSensitive(window, "width")->valueint;
 	HEIGHT = cJSON_GetObjectItemCaseSensitive(window, "height")->valueint;
 	MARGIN = cJSON_GetObjectItemCaseSensitive(window, "text")->valueint;
+	CENTER = cJSON_GetObjectItemCaseSensitive(window, "center")->valueint;
 
 	cJSON *keys = cJSON_GetObjectItemCaseSensitive(json, "keys");
 
@@ -162,11 +164,14 @@ int main(int argc, char **argv) {
 	gtk_layer_set_layer(GTK_WINDOW(window), GTK_LAYER_SHELL_LAYER_TOP);
 	gtk_layer_set_keyboard_interactivity(GTK_WINDOW(window), TRUE);
 	gtk_layer_set_exclusive_zone(GTK_WINDOW(window), 0);
-	gtk_layer_set_anchor(GTK_WINDOW(window),
-	                     GTK_LAYER_SHELL_EDGE_TOP |
-	                     GTK_LAYER_SHELL_EDGE_LEFT,
-	                     TRUE);
 	gtk_layer_set_margin(GTK_WINDOW(window), GTK_LAYER_SHELL_EDGE_TOP, MARGIN);
+	if (CENTER == 0) {
+		gtk_layer_set_anchor(GTK_WINDOW(window),
+							 GTK_LAYER_SHELL_EDGE_TOP |
+							 GTK_LAYER_SHELL_EDGE_LEFT,
+							 TRUE);
+	}
+
 
 	gtk_widget_add_events(window, GDK_KEY_PRESS_MASK);
 
