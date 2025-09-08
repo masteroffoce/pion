@@ -8,6 +8,7 @@ static char * BACK_KEY = "BackSpace";
 static int WIDTH = 1700;
 static int HEIGHT = 600;
 static int MARGIN = 200;
+static char ON_WRONG_KEY = 0;
 
 char *pressed_key = NULL;
 
@@ -28,15 +29,21 @@ void init_settings() {
 	(void)len;
 	fclose(settings_file);
 
-	const cJSON *json = NULL;
-	json = cJSON_Parse(buffer);
+	const cJSON *json = cJSON_Parse(buffer);
 
+	
 	cJSON *window = cJSON_GetObjectItemCaseSensitive(json, "window");
 
-	WIDTH = (int)cJSON_GetObjectItemCaseSensitive(window, "width")->valuedouble;
-	HEIGHT = (int)cJSON_GetObjectItemCaseSensitive(window, "height")->valuedouble;
-	MARGIN = (int)cJSON_GetObjectItemCaseSensitive(window, "text")->valuedouble;
+	WIDTH = cJSON_GetObjectItemCaseSensitive(window, "width")->valueint;
+	HEIGHT = cJSON_GetObjectItemCaseSensitive(window, "height")->valueint;
+	MARGIN = cJSON_GetObjectItemCaseSensitive(window, "text")->valueint;
 
+	cJSON *keys = cJSON_GetObjectItemCaseSensitive(json, "keys");
+
+	BACK_KEY = cJSON_GetObjectItemCaseSensitive(keys, "back")->valuestring;
+	ON_WRONG_KEY = cJSON_GetObjectItemCaseSensitive(keys, "quit_on_wrong")->valueint;
+
+	free(keys);
 	free(window);
 }
 
@@ -103,9 +110,13 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 		if (keys_arr->len > 0) {
 			g_ptr_array_remove_index(keys_arr, keys_arr->len - 1);
 		} else {
-			gtk_main_quit();
+			//gtk_main_quit();
+			if (ON_WRONG_KEY == 1) {
+				exit(1);
+			}
 		}
 	} else { //Else, add pressed key to list
+		//Not if non-relevant key
 		g_ptr_array_add(keys_arr, g_strdup(keyname));
 	}
 
@@ -117,7 +128,8 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	//g_print("Key: %s\n", keyname);
 
 	if (eval_key(keys_arr)) {
-		gtk_main_quit();
+		if (ON_WRONG_KEY == 1)
+			gtk_main_quit();
 	}
 
 	return TRUE;
