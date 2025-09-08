@@ -8,7 +8,7 @@ static char * BACK_KEY = "BackSpace";
 static int WIDTH = 1700;
 static int HEIGHT = 600;
 static int MARGIN = 200;
-static char ON_WRONG_KEY = 0;
+static char QUIT_ON_WRONG_KEY = 0;
 static char CENTER = 0;
 
 char *pressed_key = NULL;
@@ -43,7 +43,7 @@ void init_settings() {
 	cJSON *keys = cJSON_GetObjectItemCaseSensitive(json, "keys");
 
 	BACK_KEY = cJSON_GetObjectItemCaseSensitive(keys, "back")->valuestring;
-	ON_WRONG_KEY = cJSON_GetObjectItemCaseSensitive(keys, "quit_on_wrong")->valueint;
+	QUIT_ON_WRONG_KEY = cJSON_GetObjectItemCaseSensitive(keys, "quit_on_wrong")->valueint;
 
 	free(keys);
 	free(window);
@@ -113,7 +113,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 			g_ptr_array_remove_index(keys_arr, keys_arr->len - 1);
 		} else {
 			//gtk_main_quit();
-			if (ON_WRONG_KEY == 1) {
+			if (QUIT_ON_WRONG_KEY == 1) {
 				exit(1);
 			}
 		}
@@ -129,9 +129,11 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 
 	//g_print("Key: %s\n", keyname);
 
-	if (eval_key(keys_arr)) {
-		if (ON_WRONG_KEY == 1)
+	int res = eval_key(keys_arr);
+	if (res == 1) {
+		if (QUIT_ON_WRONG_KEY == 1)
 			gtk_main_quit();
+		printf("%d", res);
 	}
 
 	return TRUE;
