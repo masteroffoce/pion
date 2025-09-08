@@ -1,0 +1,39 @@
+.label {
+	color: #f00;
+	font-size: 20px;
+	background-color: #333;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+.title {
+	font-size: 100px;
+	color: #888;
+}
+
+
+.window {
+	border: 10px solid #222;
+}
+
+.key {
+	/* background-color: #333; */
+	background-color: rgba(15%, 33, 33, 0.7);
+	padding: 20px;
+	border-radius: 0px;
+}
+
+.letter {
+	color: #777;
+	font-size: 30px;
+}
+
+.word {
+	color: #555;
+	font-size: 16px;
+}
+
+.screen {
+	/*background-color: #ffd; */
+	background-image: url("/home/calcium/Downloads/volcano_bg.jpg");
+}

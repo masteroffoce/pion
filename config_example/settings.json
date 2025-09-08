@@ -1,0 +1,13 @@
+{
+	"window": {
+		"width": 1700,
+		"height": 0,
+		"text": 200,
+		"center": 1
+	},	
+	"keys": {
+		"back": "BackSpace",
+		"quit_on_wrong": 1,
+		"abort_key": "backslash"
+	}
+}

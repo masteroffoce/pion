@@ -1,0 +1,24 @@
+{
+	"f": {
+		"space": {
+				"r": {
+					"shell": "librewolf &",
+					"name": "Firefox"
+				}
+
+
+		},
+		"r": {
+			"shell": "flatpak --user run com.revolutionarygamesstudio.ThriveLauncher &",
+			"name": "Thrive"
+		}
+	},
+	"k": {
+		"shell": "kitty --detach &",
+		"name": "Kitty"
+	},
+	"n": {
+		"shell": "nwg-icon-picker &",
+		"name": "Nwg icons"
+	}
+}
