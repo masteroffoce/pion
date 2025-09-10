@@ -64,7 +64,7 @@ void read_keyboard(KeyBoard *keyboard) {
 	fclose(keyboard_file);
 }
 
-void fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard) {
+cJSON* fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard) {
 	(void)keyboard;
 	FILE *layout_file = fopen("layout.json", "r");
 	char buffer[65536];
@@ -86,6 +86,8 @@ void fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard) {
 		//printf("%s",cJSON_GetObjectItem(key, "name")->string);
 		key = key->next;
 	}
+
+	return json;
 }
 
 int exec_json(GPtrArray *keys_arr) {

@@ -1,5 +1,6 @@
 #ifndef UI_H
 #define UI_H
+#include <cjson/cJSON.h>
 
 #define MAX_KEYS 140
 #define MAX_KEY_LEN 10
@@ -28,7 +29,7 @@ typedef struct {
 } KeyBoard;
 
 void read_keyboard(KeyBoard *keyboard);
-void fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard);
+cJSON* fill_keyboard(GPtrArray *keys_arr, KeyBoard *keyboard);
 
 int exec_json(GPtrArray *keys_arr);
 GPtrArray* presuffix_keys_arr(GPtrArray *keys_arr);
