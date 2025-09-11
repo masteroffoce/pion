@@ -11,8 +11,11 @@ static int HEIGHT = 600;
 static int MARGIN = 200;
 static char QUIT_ON_WRONG_KEY = 0;
 static char CENTER = 0;
+static char RESIZE = 0;
+static char HIDE_IRRELEVANT = 1;
 
 char *pressed_key = NULL;
+static GtkCssProvider *provider = NULL;
 
 typedef struct {
 	GtkLabel *title_label;
@@ -48,6 +51,8 @@ void init_settings() {
 	BACK_KEY = cJSON_GetObjectItemCaseSensitive(keys, "back")->valuestring;
 	QUIT_ON_WRONG_KEY = cJSON_GetObjectItemCaseSensitive(keys, "quit_on_wrong")->valueint;
 	ABORT_KEY = cJSON_GetObjectItemCaseSensitive(keys, "abort_key")->valuestring;
+	HIDE_IRRELEVANT = cJSON_GetObjectItemCaseSensitive(keys, "hide_irrelevant")->valueint;
+	RESIZE = 1 - cJSON_GetObjectItemCaseSensitive(keys, "no_resize_window")->valueint;
 
 	free(keys);
 	free(window);
@@ -81,20 +86,40 @@ char * string_from_keys_arr(GPtrArray *keys_arr) {
 	return buffer;
 }
 
-void hide_unallowed(cJSON* allowed_keys, GtkWidget** box_labels, GtkWidget** keys_labels, int num_of_keys) {
-	if (!allowed_keys)
+void hide_unallowed(cJSON* relevant_keys, GtkWidget** box_labels, GtkWidget** keys_labels, int num_of_keys) {
+	if (!relevant_keys)
 		return;
-	cJSON *key = allowed_keys->child;
+	cJSON *key = relevant_keys->child;
+	char* string = cJSON_Print(key);
+	printf("\n\n%s\n\n", string);
+
+	if (HIDE_IRRELEVANT) {
+		for (int i = 0; i < num_of_keys; i++) {
+			gtk_style_context_add_class(gtk_widget_get_style_context(box_labels[i]), "transparent");
+			if (RESIZE)
+				gtk_widget_hide(box_labels[i]);
+		}
+	}
 	while (key) {
 		char* key_value = key->string;
 		printf("/%s", key_value);
 
-		for (int i = 0; i < num_of_keys; i++) {
-			//gtk_widget_hide(box_labels[i]);
-			//gtk_widget_set_visible(box_labels[i], FALSE);
-			if (strcmp(key_value, gtk_label_get_text(GTK_LABEL(keys_labels[i]))) == 0)
-				//gtk_widget_show(box_labels[i]);
-				gtk_widget_set_visible(box_labels[i], TRUE);
+
+
+		if (HIDE_IRRELEVANT) {
+			for (int i = 0; i < num_of_keys; i++) {
+				//gtk_widget_hide(box_labels[i]);
+				//gtk_widget_set_visible(box_labels[i], FALSE);
+				if (strcmp(key_value, gtk_label_get_text(GTK_LABEL(keys_labels[i]))) == 0) {
+					//gtk_widget_show(box_labels[i]);
+					//gtk_widget_set_visible(box_labels[i], TRUE);
+					gtk_style_context_remove_class(gtk_widget_get_style_context(box_labels[i]), "transparent");
+					if (RESIZE) {
+						gtk_widget_show(box_labels[i]);
+					}
+
+				}
+			}
 		}
 
 
@@ -180,6 +205,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 
 	//g_print("Key: %s\n", keyname);
 	
+	json = cJSON_GetObjectItemCaseSensitive(json, pressed_key);
 	hide_unallowed(json, data->box_labels, data->keys_labels, data->num_of_keys);
 
 	return TRUE;
@@ -193,7 +219,7 @@ int main(int argc, char **argv) {
 	gtk_init(&argc, &argv);
 	
 	//CSS
-	GtkCssProvider *provider = gtk_css_provider_new();
+	/*GtkCssProvider*/ /***/provider = gtk_css_provider_new();
 	gtk_css_provider_load_from_path(provider, "style.css", NULL);
 	//
 	GdkDisplay *display = gdk_display_get_default();
@@ -303,10 +329,8 @@ int main(int argc, char **argv) {
 
 	gtk_widget_show_all(window);
 
-	/*
 	cJSON* json = fill_keyboard(keys_arr, &keyboarid);
 	hide_unallowed(json, box_labels, keys_labels, i);
-	*/
 
 	gtk_main();
 
