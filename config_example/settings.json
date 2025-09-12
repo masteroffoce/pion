@@ -3,11 +3,13 @@
 		"width": 1700,
 		"height": 0,
 		"text": 200,
-		"center": 1
+		"center": true
 	},	
 	"keys": {
 		"back": "BackSpace",
-		"quit_on_wrong": 1,
-		"abort_key": "backslash"
+		"quit_on_wrong": true,
+		"abort_key": "backslash",
+		"hide_irrelevant": true,
+		"no_resize_window": true
 	}
 }

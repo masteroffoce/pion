@@ -11,11 +11,6 @@
 	color: #888;
 }
 
-
-.window {
-	border: 10px solid #222;
-}
-
 .key {
 	/* background-color: #333; */
 	background-color: rgba(15%, 33, 33, 0.7);
@@ -36,4 +31,8 @@
 .screen {
 	/*background-color: #ffd; */
 	background-image: url("/home/calcium/Downloads/volcano_bg.jpg");
+}
+
+.transparent {
+	opacity: 0;
 }
