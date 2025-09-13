@@ -7,7 +7,7 @@
 #define MAX_ROW_LEN 24
 #define MAX_KEYBOARD_HEIGHT 6
 
-void init_do_bash();
+void init_keyboard();
 
 typedef struct {
 	char name[50];

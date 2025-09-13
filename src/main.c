@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 #include <gtk-layer-shell.h>
-#include "do_bash.h"
+#include "keyboard.h"
 #include <string.h>
 #include <cjson/cJSON.h>
 
@@ -129,14 +129,6 @@ void hide_unallowed(cJSON* relevant_keys, GtkWidget** box_labels, GtkWidget** ke
 	}
 }
 
-/*
-gboolean after_start(gpointer user_data) {
-	printf("hi");
-	return G_SOURCE_REMOVE;
-
-}
-*/
-
 gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data) {
 	(void) widget;
 	AppData *data = (AppData *)user_data;
@@ -212,7 +204,7 @@ gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 }
 
 int main(int argc, char **argv) {
-	init_do_bash();
+	init_keyboard();
 	init_settings();
 
 

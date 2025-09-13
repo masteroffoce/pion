@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <cjson/cJSON.h>
 #include <gtk/gtk.h>
-#include "do_bash.h"
+#include "keyboard.h"
 
-void init_do_bash() {
+void init_keyboard() {
 	char buffer[250];
 	const char *xdg_config_home = getenv("XDG_CONFIG_HOME");
 	if (xdg_config_home) {

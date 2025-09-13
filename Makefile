@@ -1,8 +1,8 @@
 CC = clang
 CFLAGS = -Wall -Wextra -O2 $(shell pkg-config --cflags gtk+-3.0 gtk-layer-shell-0) $(shell pkg-config --cflags libcjson) -g -std=c99
 LDFLAGS = $(shell pkg-config --libs gtk+-3.0 gtk-layer-shell-0) $(shell pkg-config --libs libcjson)
-TARGET = run
-SRC = test.c do_bash.c
+TARGET = exec
+SRC = src/main.c src/keyboard.c
 OBJ = $(SRC:.c=.o)
 DEP = $(OBJ:.o=.d)
 
@@ -22,5 +22,6 @@ test: $(TARGET)
 clean:
 	rm -f $(TARGET) $(OBJ)
 
+
 .PHONY:
-	all clean
+	all clean test
